@@ -1,8 +1,7 @@
 package main;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
 
@@ -20,31 +19,26 @@ public class TimeUtil {
 		return list;
 	}
 
-	public static Calendar getAvgTime(ArrayList<String> list) {
-		Long timeMilliSeconds = 0L;
-		Long timeMilliSecondsAvg = 0L;
+	public static String getAvgTime(ArrayList<String> list) {
+		Integer timeMinutes = 0;
+		Double timeMinutesAvg = 0D;
 
 		for (String obj : list) {
-			timeMilliSeconds += getCalendarDate(obj).getTimeInMillis();
+			timeMinutes += getTimeInMinutes(obj);
 		}
 
-		timeMilliSecondsAvg = timeMilliSeconds / list.size();
+		timeMinutesAvg = (double) timeMinutes / list.size();
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(timeMilliSecondsAvg);
+		int hour = (int) (timeMinutesAvg / 60);
+		int minutes = (int) (timeMinutesAvg % 60);
 
-		return calendar;
+		return hour + ":" + minutes;
 	}
 
-	private static Calendar getCalendarDate(String time) {
+	private static Integer getTimeInMinutes(String time) {
 		String[] breakTime = getBreakTime(time);
-		Calendar calendar = Calendar.getInstance();
-		LocalDateTime now = LocalDateTime.now();
 
-		calendar.set(now.getYear(), now.getMonthValue()-1, now.getDayOfMonth(), Integer.parseInt(breakTime[0]),
-				Integer.parseInt(breakTime[1]));
-
-		return calendar;
+		return (int) TimeUnit.HOURS.toMinutes(Long.parseLong(breakTime[0])) + Integer.parseInt(breakTime[1]);
 	}
 
 	private static String[] getBreakTime(String time) {
